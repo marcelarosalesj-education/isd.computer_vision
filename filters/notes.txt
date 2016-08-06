@@ -1,0 +1,10 @@
+prog1
+Takes an image from the webcam and applies a 5x5 Mean filter.
+
+prog2
+Applies many colormaps using OpenCV functions.
+Uses channels RGB.
+
+prog3
+Uses many many filters. 
+Most algorithms were taken from internet. Others are experiments. 
