@@ -33,6 +33,15 @@ int main()
 	cin>>file_name;
     //file_name="imagen1";
     img = imread("./img_in/"+file_name+".jpg",CV_LOAD_IMAGE_COLOR);
+
+    
+    // Move this depending on image size
+    cout << " cols "<< img.cols << endl;
+    cout << " rows "<< img.rows << endl;
+    Size size(img.cols/7,img.rows/7);//the dst image size,e.g.100x100
+    resize(img,img,size);//resize image
+
+    //namedWindow("IMG", WINDOW_NORMAL);
     imshow("IMG", img);
 
 
@@ -223,6 +232,51 @@ int main()
     dilate(img, dst, my_kernel, Point(-1, -1), 2, 1, 1);
     erode(dst, dst, my_kernel, Point(-1, -1), 2, 1, 1);
     imshow("Cerradura", dst);
+
+    
+    /* 
+        I don't know if this works
+    */
+    Mat dst2,dst3,dst4;
+    // Detector de esquinas
+    kernel_size=3;
+    my_kernel= (Mat_<double>(kernel_size,kernel_size) <<
+                //0,1,0,1,1,1,0,1,0
+                0,1,0,0,1,1,0,0,0 // deteccion de esquinas L
+
+    );
+    filter2D(img, dst1, -1 , my_kernel, Point( -1, -1 ), 0, BORDER_DEFAULT );
+    my_kernel= (Mat_<double>(kernel_size,kernel_size) <<
+                0,1,0,1,1,0,0,0,0
+    );
+    filter2D(img, dst2, -1 , my_kernel, Point( -1, -1 ), 0, BORDER_DEFAULT );
+    my_kernel= (Mat_<double>(kernel_size,kernel_size) <<
+                0,0,0,1,1,0,0,1,0
+    );
+    filter2D(img, dst3, -1 , my_kernel, Point( -1, -1 ), 0, BORDER_DEFAULT );
+    my_kernel= (Mat_<double>(kernel_size,kernel_size) <<
+                0,0,0,0,1,1,0,1,0
+    );
+    filter2D(img, dst4, -1 , my_kernel, Point( -1, -1 ), 0, BORDER_DEFAULT );
+
+    dst=dst1|dst2|dst3|dst4;
+    imshow("Esquinas", dst);
+
+
+    my_kernel= (Mat_<double>(kernel_size,kernel_size) <<
+                0,-1,0,-1,4,-1,0,-1,0
+    );
+    //my_kernel=cv::flip(my_kernel);
+    Point anchor;
+    anchor = Point( -1, -1 );
+    //filter2D(img,  dst1, my_kernel,Point(my_kernel.cols - anchor.x - 1, my_kernel.rows - anchor.y - 1),0, BORDER_DEFAULT);
+    //filter2D(dst1, dst2, my_kernel,Point(my_kernel.cols - anchor.x - 1, my_kernel.rows - anchor.y - 1),0, BORDER_DEFAULT);
+    filter2D(img, dst1, -1 , my_kernel, Point( -1, -1 ), 0, BORDER_DEFAULT );
+    filter2D(dst1, dst2, -1 , my_kernel, Point( -1, -1 ), 0, BORDER_DEFAULT );
+    imshow("Canny?", dst2);
+
+
+
 
     waitKey(0);
     cout<<"Goodbye!"<<endl;
