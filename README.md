@@ -1,10 +1,9 @@
 # vision
 
-In this repo I:
-- code computer vision algorithms
-- play with openCV library for C and Python
-- (try to) implement applications
+Software uses:
+- OpenCV 2.4.8 with C++
 
 Folder organization:
 - filters
 - segmentation
+
