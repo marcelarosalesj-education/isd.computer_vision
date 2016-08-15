@@ -3,9 +3,10 @@ From this tutorial
 http://www.learnopencv.com/applycolormap-for-pseudocoloring-in-opencv-c-python/
 
 */
-#include <opencv2/contrib/contrib.hpp>
+//#include <opencv2/contrib/contrib.hpp> // had to remove for opencv3
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include "opencv2/imgproc/imgproc.hpp" // I added this to make it work with opencv3
 #include <string>
 #include <iostream>
 #include <stdio.h>

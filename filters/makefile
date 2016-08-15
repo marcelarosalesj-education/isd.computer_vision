@@ -1,4 +1,3 @@
-OBJS = ex2.o
 CC = g++
 DEBUG = -g
 CFLAGS = -Wall -c $(DEBUG)
