@@ -35,7 +35,7 @@ int main()
     /*
         Assigns img1 to Blue channel, img5 to Green channel and img4 to Red channel.
         Then merges the new arrangement into img451.
-        The result is right after comparing with ImageJ software.
+        The result is correct after comparing with ImageJ software.
     */
 
     channel[0] = img1; // B
