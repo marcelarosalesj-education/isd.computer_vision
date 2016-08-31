@@ -66,7 +66,6 @@ void CallBackFunc(int event, int x, int y, int flags, void* userdata)
           gpi = vG / 255.0;
           bpi = vB / 255.0;
 
-          cout << "RGB " << rpi << " "<< gpi <<" "<<bpi<< endl;
           Cmax = max(rpi, gpi);
           Cmax = max(Cmax, bpi);
           Cmin = min(rpi, gpi);
@@ -90,7 +89,8 @@ void CallBackFunc(int event, int x, int y, int flags, void* userdata)
               vS = dif/Cmax;
           }
           vV = Cmax;  
-          cout <<"HSV"<< vH << "  " << vS << "  " << vV<< endl;
+          cout <<"2) HSV(or)"<< (vH)*float(180/360) << "  " << (vS)*float(100/255) << "  " << (vV)*float(100/255) << endl;
+          cout <<"   HSV(cv)"<< (vH) << "  " << (vS) << "  " << (vV) << endl;
      }
      else if  ( event == EVENT_RBUTTONDOWN )
      {
@@ -125,105 +125,123 @@ void CannyThreshold(int, void*)
 
 int main()
 {
-    // Load photo
-    string file_name = "DJI_0015.jpg";
-    img = imread("./Photos/"+file_name, CV_LOAD_IMAGE_COLOR);
+	bool goahead=true;
+	while( goahead ){
+		string aux;
+		cout << "Which photo (number from 000 to 261)?"<< endl;
+		cin >> aux;
+		// Load photo
+	    string file_name = "DJI_0"+aux+".jpg";
+	    cout << file_name<<endl;
+	    img = imread("./Photos/"+file_name, CV_LOAD_IMAGE_COLOR);
 
-    // Resize
-    Size size(img.cols/10.0, img.rows/10.0);
-    resize(img, img, size);
+	    // Resize
+	    Size size(img.cols/10.0, img.rows/10.0);
+	    resize(img, img, size);
 
-    namedWindow("Image", CV_WINDOW_AUTOSIZE);
-    setMouseCallback("Image", CallBackFunc, NULL);
-    imshow("Image", img);
+	    namedWindow("Image", CV_WINDOW_AUTOSIZE);
+	    setMouseCallback("Image", CallBackFunc, NULL);
+	    imshow("Image", img);
 
-    cout << "Rows: " << img.rows << endl;
-    cout << "Cols: " << img.cols << endl;
+	    cout << "Rows: " << img.rows << endl;
+	    cout << "Cols: " << img.cols << endl;
 
-    // Gaussian 3x3 filter
-    Mat my_kernel;
-    int kernel_size;
-    kernel_size=3;
-    my_kernel= (Mat_<double>(kernel_size,kernel_size) <<
-            0.077847,0.123317,0.077847,0.123317,0.195346,0.123317,0.077847,0.123317,0.077847 // Gauss 3x3
-    );
-    filter2D(img, blur_bgr, -1 , my_kernel, Point( -1, -1 ), 0, BORDER_DEFAULT );
-    imshow("Gauss 3x3 BGR", blur_bgr);
+	    // Gaussian 3x3 filter
+	    Mat my_kernel;
+	    int kernel_size;
+	    kernel_size=3;
+	    my_kernel= (Mat_<double>(kernel_size,kernel_size) <<
+	            0.077847,0.123317,0.077847,0.123317,0.195346,0.123317,0.077847,0.123317,0.077847 // Gauss 3x3
+	    );
+	    filter2D(img, blur_bgr, -1 , my_kernel, Point( -1, -1 ), 0, BORDER_DEFAULT );
+	    
+	    namedWindow("Gauss 3x3 BGR", CV_WINDOW_AUTOSIZE);
+	    setMouseCallback("Gauss 3x3 BGR", CallBackFunc, NULL);
+	    imshow("Gauss 3x3 BGR", blur_bgr);
+	    
+	    // Filter green in BGR color space.
+	    Mat green_bgr_filtered;
+	    //inRange(blur_bgr, Scalar(10,40,10) , Scalar(60,140,60) ,  green_bgr_filtered); // works
+	    inRange(blur_bgr, Scalar(30,30,20) , Scalar(150,170,90) ,  green_bgr_filtered); // works better
+	    threshold(green_bgr_filtered, green_bgr_filtered, 10,255,THRESH_BINARY_INV);
+	    namedWindow("Green filter BGR", CV_WINDOW_AUTOSIZE);
+	    imshow("Green filter BGR", green_bgr_filtered);
+	    //erode(green_bgr_filtered, green_bgr_filtered, my_kernel, Point(-1, -1), 2, 1, 1);
+	    //imshow("Green filter BGR Erode ",green_bgr_filtered);
+
+
+
+	    // Get image in HSV color space
+	    cvtColor(img, img_hsv, CV_BGR2HSV);
+	    namedWindow("Image HSV");
+	    setMouseCallback("Image HSV", CallBackFunc, NULL);
+	    imshow("Image HSV", img_hsv);
+
+	    // Gaussian 3x3 filter HSV
+	    filter2D(img_hsv, blur_hsv, -1 , my_kernel, Point( -1, -1 ), 0, BORDER_DEFAULT );
+	    setMouseCallback("Gauss 3x3 HSV", CallBackFunc, NULL);
+	    imshow("Gauss 3x3 HSV", blur_hsv);
+
+	    // Filter green in HSV color space.
+	    Mat green_hsv_filtered;
+	    double Hmax, Hmin, Smax, Smin, Vmax, Vmin;    
+	    // HSV original values
+	    Hmax = 100.0;
+	    Smax = 80.00;
+	    Vmax = 70.0;
+
+	    Hmin = 60.42;  
+	    Smin = 35.00;
+	    Vmin = 15.00;
+	    // HSV openCV values
+	    Hmax = Hmax*(180.0/360);
+	    Hmin = Hmin*(180.0/360);
+	    Smin = Smin*(255.0/100);
+	    Smax = Smax*(255.0/100);
+	    Vmax = Vmax*(255.0/100);
+	    Vmin = Vmin*(255.0/100);
+
+	    cout << "Filtered HSV max : "<<Hmax<<" , "<<Smax<<" , "<<Vmax<< endl;
+	    cout << "Filtered HSV min : "<<Hmin<<" , "<<Smin<<" , "<<Vmin<< endl;
+	    inRange(blur_hsv, Scalar(Hmin, Smin, Vmin) , Scalar(Hmax, Smax, Vmax) ,  green_hsv_filtered);
+	    threshold(green_hsv_filtered, green_hsv_filtered, 10,255,THRESH_BINARY_INV);
+	    namedWindow("Green filter HSV", CV_WINDOW_AUTOSIZE);
+	    imshow("Green filter HSV", green_hsv_filtered);
+
+		/*
+	    // Canny 
+
+	    //img = green_bgr_filtered;
+
+	    /// Create a matrix of the same type and size as src (for dst)
+	    dst.create( img.size(), img.type() );
+
+	    /// Convert the image to grayscale
+	    cvtColor( img, src_gray, CV_BGR2GRAY );
+
+	    /// Create a window
+	    namedWindow( "Edge Map", CV_WINDOW_AUTOSIZE );
+
+	    /// Create a Trackbar for user to enter threshold
+	    createTrackbar( "Min Threshold:", "Edge Map", &lowThreshold, max_lowThreshold, CannyThreshold );
+
+	    /// Show the image
+	    CannyThreshold(0, 0);
+	    */
+	    
+	    waitKey(0);
+	    destroyAllWindows();
+
+	    
+	    /*cout << "Continue? (y)" << endl;
+	    cin >> aux;
+	    if(aux != "y"){
+	    	/goahead = false;
+	    }*/
+	    
+
+	}
     
-    // Filter green in BGR color space.
-    Mat green_bgr_filtered;
-    inRange(blur_bgr, Scalar(10,40,10) , Scalar(60,140,60) ,  green_bgr_filtered);
-    //namedWindow("Green filter BGR", CV_WINDOW_AUTOSIZE);
-    //imshow("Green filter BGR", green_bgr_filtered);
-
-    threshold(green_bgr_filtered, green_bgr_filtered, 10,255,THRESH_BINARY_INV);
-    imshow("Green filter BGR", green_bgr_filtered);
-    erode(green_bgr_filtered, green_bgr_filtered, my_kernel, Point(-1, -1), 2, 1, 1);
-    imshow("Filtro HSV ",green_bgr_filtered);
-
-
-/*
-    // Get image in HSV color space
-    cvtColor(img, img_hsv, CV_BGR2HSV);
-    namedWindow("Image HSV");
-    setMouseCallback("Image HSV", CallBackFunc, NULL);
-    imshow("Image HSV", img_hsv);
-
-    // Gaussian 3x3 filter HSV
-    filter2D(img_hsv, blur_hsv, -1 , my_kernel, Point( -1, -1 ), 0, BORDER_DEFAULT );
-    setMouseCallback("Gauss 3x3 HSV", CallBackFunc, NULL);
-    imshow("Gauss 3x3 HSV", blur_hsv);
-
-    //  -- working up to here...
-
-    // Filter green in HSV color space.
-    Mat green_hsv_filtered;
-    float Hmax, Hmin, Smax, Smin, Vmax, Vmin;    
-    Hmax = 120;  
-    Smax = 0.5714;
-    Vmax = 0.549;
-    Hmin = 90;
-    Smin = 0.75;
-    Vmin = 0.1569;
-    Hmax = Hmax/2;
-    Hmin = Hmin/2;
-    Smax = Smax*255;
-    Smin = Smin*255;
-    Vmax = Vmax*255;
-    Vmin = Vmin*255;
-    cout << "Filtered HSV max "<<Hmax<<" , "<<Smax<<" , "<<Vmax<< endl;
-    cout << "Filtered HSV min "<<Hmin<<" , "<<Smin<<" , "<<Vmin<< endl;
-    //inRange(blur_hsv, Scalar(Vmin, Smin,Hmin) , Scalar(Vmax,Smax,Hmax) ,  green_hsv_filtered);
-
-    inRange(blur_hsv, Scalar(30,150,50) , Scalar(255,255,180) ,  green_hsv_filtered);
-
-    // work... but, why?
-    //inRange(blur_hsv, Scalar(30,150,50) , Scalar(255,255,180) ,  green_hsv_filtered);
-
-    namedWindow("Green filter HSV", CV_WINDOW_AUTOSIZE);
-    imshow("Green filter HSV", green_hsv_filtered);
- */
-
-    // Canny 
-
-    //img = green_bgr_filtered;
-
-    /// Create a matrix of the same type and size as src (for dst)
-    dst.create( img.size(), img.type() );
-
-    /// Convert the image to grayscale
-    cvtColor( img, src_gray, CV_BGR2GRAY );
-
-    /// Create a window
-    namedWindow( "Edge Map", CV_WINDOW_AUTOSIZE );
-
-    /// Create a Trackbar for user to enter threshold
-    createTrackbar( "Min Threshold:", "Edge Map", &lowThreshold, max_lowThreshold, CannyThreshold );
-
-    /// Show the image
-    CannyThreshold(0, 0);
-    
-    waitKey(0);
 
     cout<<"Goodbye!"<<endl;
 
