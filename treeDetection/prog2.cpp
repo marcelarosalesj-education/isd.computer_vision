@@ -128,10 +128,14 @@ int main()
 	bool goahead=true;
 	while( goahead ){
 		string aux;
-		cout << "Which photo (number from 000 to 261)?"<< endl;
+		cout << "Which photo (number from 1 - 14)?"<< endl;
 		cin >> aux;
+
+		// Exits if q is received. 
+		if(aux == "q") break; 
+		
 		// Load photo
-	    string file_name = "DJI_0"+aux+".jpg";
+	    string file_name = "photo"+aux+".jpg";
 	    cout << file_name<<endl;
 	    img = imread("./Photos/"+file_name, CV_LOAD_IMAGE_COLOR);
 
