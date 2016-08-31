@@ -1,10 +1,5 @@
 /*
-    This program shows trees.
-
-
-    Canny Detector
-    http://docs.opencv.org/2.4/doc/tutorials/imgproc/imgtrans/canny_detector/canny_detector.html
-
+    Tree Segmentation using RGB and HSV color space.
 
 */
 
@@ -128,7 +123,7 @@ int main()
 	bool goahead=true;
 	while( goahead ){
 		string aux;
-		cout << "Which photo (number from 1 - 14)?"<< endl;
+		cout << "Which photo (number from 1 - 7)?"<< endl;
 		cin >> aux;
 
 		// Exits if q is received. 
@@ -211,41 +206,12 @@ int main()
 	    threshold(green_hsv_filtered, green_hsv_filtered, 10,255,THRESH_BINARY_INV);
 	    namedWindow("Green filter HSV", CV_WINDOW_AUTOSIZE);
 	    imshow("Green filter HSV", green_hsv_filtered);
-
-		/*
-	    // Canny 
-
-	    //img = green_bgr_filtered;
-
-	    /// Create a matrix of the same type and size as src (for dst)
-	    dst.create( img.size(), img.type() );
-
-	    /// Convert the image to grayscale
-	    cvtColor( img, src_gray, CV_BGR2GRAY );
-
-	    /// Create a window
-	    namedWindow( "Edge Map", CV_WINDOW_AUTOSIZE );
-
-	    /// Create a Trackbar for user to enter threshold
-	    createTrackbar( "Min Threshold:", "Edge Map", &lowThreshold, max_lowThreshold, CannyThreshold );
-
-	    /// Show the image
-	    CannyThreshold(0, 0);
-	    */
 	    
 	    waitKey(0);
 	    destroyAllWindows();
-
 	    
-	    /*cout << "Continue? (y)" << endl;
-	    cin >> aux;
-	    if(aux != "y"){
-	    	/goahead = false;
-	    }*/
-	    
-
 	}
-    
+    destroyAllWindows();
 
     cout<<"Goodbye!"<<endl;
 
