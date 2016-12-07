@@ -1,9 +1,0 @@
-http://earthexplorer.usgs.gov/
-
-https://ers.cr.usgs.gov/
-
-http://gaia.inegi.org.mx/mdm6/?v=bGF0OjI1LjYwMzkwLGxvbjotMTAwLjQwMTg2LHo6NyxsOmM5MDJ8YzkwMw==
-
-http://www1.cs.columbia.edu/CAVE/databases/multispectral/real_and_fake/
-
-
