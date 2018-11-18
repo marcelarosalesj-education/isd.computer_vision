@@ -1,10 +1,6 @@
 # vision
 
-Software uses:
-- ~~OpenCV 2.4.8 with C++~~
-- OpenCV 3 with C++ and maybe python
-
-Folder organization:
+Projects:  
 - BasicOpenCV: basic code to verify installation (in process).
 - filters: some basic filters and experiments.
 - segmentation: a region growing algorithm. 

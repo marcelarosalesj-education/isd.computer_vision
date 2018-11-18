@@ -1,10 +1,6 @@
-/BasicOpenCV/img_in/
-/filters/img_in/
-/segmentation/img_in/
-/segmentation/img_out/
-/treeDetection/Photos/
-/treeDetection/img_in/
-/BasicOpenCV/main
-/filters/myProg1
-/filters/myProg2
-/filters/myProg3
+# Ignore everything in bin
+bin/*
+# Ignore object files
+*.o
+#Ignore testing images
+images/*
